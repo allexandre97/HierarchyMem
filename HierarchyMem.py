@@ -930,7 +930,7 @@ class SVD:
             for b in range(len(Builds)):
                 print(' %i --> %s' % (b, Builds[b]))
             
-            Build = int(input(' Select one of the previous builds by number '))
+            Build = input(' Select one of the previous builds by number\n Input None if you do not want any of the builds shown ')
             
         else:
             Build = build
@@ -1083,16 +1083,6 @@ class SVD:
             self.found = False
 
     def build(self,Set,Names):
-        
-# =============================================================================
-#         for frame in range(Set.shape[1]):
-#             print('Building Data Matrix %i %% Done' % (100*(frame+1)/Set.shape[1]), end = '\r')
-#             DAT = Set[:,frame].reshape(Set.shape[0],Set.shape[2]*Set.shape[3]).T
-#             if frame == 0:
-#                 DATA = DAT
-#             else:
-#                 DATA = np.vstack((DATA,DAT))
-# =============================================================================
         DATA = Set.reshape(Set.shape[0],Set.shape[3],Set.shape[1]*Set.shape[2])
         DATA = DATA.reshape(DATA.shape[0],DATA.shape[1]*DATA.shape[2])
         DATA = DATA.T
