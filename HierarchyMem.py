@@ -1083,7 +1083,8 @@ class SVD:
             self.found = False
 
     def build(self,Set,Names):
-        DATA = Set.reshape(Set.shape[0],Set.shape[1]*Set.shape[2]*Set.shape[3])
+        DATA = Set.reshape(Set.shape[0],Set.shape[3],Set.shape[1]*Set.shape[2])
+        DATA = DATA.reshape(DATA.shape[0],DATA.shape[1]*DATA.shape[2])
         DATA = DATA.T
         #Normalize by columns
         for col in range(DATA.shape[1]):
@@ -1231,30 +1232,20 @@ class SVD:
             
             sets = [set1,set2,set3,set4,set5]
             builds = [build1, build2, build3, build4, build5]
-            
             selection = int(input(' %s --> 0\n %s --> 1\n %s --> 2\n %s --> 3\n %s --> 4\n' % (set1[0], set2[0], set3[0], set4[0], set5[0])))
-            
             Set = self.ALLVARS[sets[selection][1]]
-            
-            print(Set.shape)
-            
             self.Names = self.ALLNAMES[sets[selection][1]]
-            
             self.plotnames = []
             for n in self.Names:
                 self.plotnames.append(self.NAMESDICT[n])
-            
             self.names_dict = {}
             for idx, name in enumerate(self.Names):
                 self.names_dict[name] = idx
             self.Build = builds[selection]
-            
             self.DatMat = self.build(Set,self.Names)
-            
             with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'wb') as f:
                 pickle.dump(self.DatMat,f)
             f.close()
-
         else:
             cont = 0            
             while cont == 0:
@@ -1324,7 +1315,7 @@ class SVD:
     
         self.LeftMat, self.SingVal, self.RightMat = np.linalg.svd(self.DatMat, full_matrices = False)
         
-        with open('./Pickles/svd_leftamt_%s.pickle' % self.Build, 'wb') as f:
+        with open('./Pickles/svd_leftmat_%s.pickle' % self.Build, 'wb') as f:
             pickle.dump(self.LeftMat, f)
         f.close()
         with open('./Pickles/svd_singval_%s.pickle' % self.Build, 'wb') as f:
@@ -1407,4 +1398,3 @@ class SVD:
         cbar.ax.tick_params(labelsize = 13)
         
         plt.tight_layout()
-
