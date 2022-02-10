@@ -922,6 +922,36 @@ class TailLRS:
 class SVD:
     def __init__(self, Build):
         
+        self.Build = Build
+        
+        files = [_ for _ in os.listdir('./Pickles/') if _.startswith('svd')]
+        
+        Builds = []
+        
+        for file in files:
+            
+            l = len(file)
+            s = ''
+            for p in range(l-8,0,-1):
+                if file[p]!='_':
+                    s+=file[p]
+                else:
+                    break
+            s = s[::-1]
+            if not s in Builds:
+                Builds.append(s)
+        
+        if len(Builds) != 0 and Build == None: 
+            
+            print('\n These are the available already analyzed builds \n')        
+            for b in range(len(Builds)):
+                print(' %i --> %s' % (b, Builds[b]))
+            
+            self.Build = input(' Select one of the previous builds by number\n Input None if you do not want any of the builds shown ')
+            
+        else:
+            self.Build = self.Build
+        
         try:
             with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'rb') as f:
                 self.DataMat = pickle.load(f)
@@ -946,34 +976,6 @@ class SVD:
         except:
             
             print('Could not open Build %s for SVD analysis...\n' % self.Build)
-            
-            files = [_ for _ in os.listdir('./Pickles/') if _.startswith('svd')]
-            
-            Builds = []
-            
-            for file in files:
-                
-                l = len(file)
-                s = ''
-                for p in range(l-8,0,-1):
-                    if file[p]!='_':
-                        s+=file[p]
-                    else:
-                        break
-                s = s[::-1]
-                if not s in Builds:
-                    Builds.append(s)
-            
-            if len(Builds) != 0 and Build == None: 
-                
-                print('\n These are the available already analyzed builds \n')        
-                for b in range(len(Builds)):
-                    print(' %i --> %s' % (b, Builds[b]))
-                
-                self.Build = input(' Select one of the previous builds by number\n Input None if you do not want any of the builds shown ')
-                
-            else:
-                self.Build = Build
             
             with open('./Pickles/prom_pos.pickle', 'rb') as f:
                 POS = pickle.load(f) #Position
