@@ -16,7 +16,7 @@ import os
 import unicodedata as ud
 
 class SearchMem: 
-    def __init__(self):    
+    def __init__(self, select = False):    
         try:
             with open('./Pickles/pos_up.pickle', 'rb') as f:
                 self.POSu = pickle.load(f)
@@ -59,23 +59,40 @@ class SearchMem:
             self.pick = True
         
         except:
-            
-            print('Initial pickle files not found...\n')
-            pdbfile = input('Input pdb or gro file:\n')
-            xtcfile = input('Input xtc file:\n')
-            self.nlipids = input('Input desired number of lipids per grid cell. Default is 10:\n')
-            self.b       = input('Input desired extension to grid cells. Default is 0:\n')
-            print('Loading files...\n')
-            self.u = mda.Universe(pdbfile,xtcfile,in_memory=True)
-            print('Files loaded!')
-            self.names = {}
-            res = self.u.residues
-            n = 0
-            for r in res:
-                if not r.resname in self.names:
-                    self.names[r.resname] = n+1
-                    n+=1
-            self.pick = False
+            if select != False:
+                print('Initial pickle files not found...\n')
+                pdbfile = input('Input pdb or gro file:\n')
+                xtcfile = input('Input xtc file:\n')
+                self.nlipids = input('Input desired number of lipids per grid cell. Default is 10:\n')
+                self.b       = input('Input desired extension to grid cells. Default is 0:\n')
+                print('Loading files...\n')
+                self.u = mda.Universe(pdbfile,xtcfile,in_memory=True)
+                print('Files loaded!')
+                self.names = {}
+                res = self.u.residues
+                n = 0
+                for r in res:
+                    if not r.resname in self.names:
+                        self.names[r.resname] = n+1
+                        n+=1
+                        self.pick = False       
+            else:
+                print('Initial pickle files not found...\n')
+                pdbfile = input('Input pdb or gro file:\n')
+                xtcfile = input('Input xtc file:\n')
+                self.nlipids = 11
+                self.b       = 0
+                print('Loading files...\n')
+                self.u = mda.Universe(pdbfile,xtcfile,in_memory=True)
+                print('Files loaded!')
+                self.names = {}
+                res = self.u.residues
+                n = 0
+                for r in res:
+                    if not r.resname in self.names:
+                        self.names[r.resname] = n+1
+                        n+=1
+                        self.pick = False        
         
     #Gets residue names and translates them to a float value as identifier
     def transname(self, resnames, names):
@@ -903,7 +920,7 @@ class TailLRS:
             pass
 
 class SVD:
-    def __init__(self, build):
+    def __init__(self, Build):
         
         files = [_ for _ in os.listdir('./Pickles/') if _.startswith('svd')]
         
@@ -922,40 +939,40 @@ class SVD:
             if not s in Builds:
                 Builds.append(s)
         
-        if len(Builds) != 0: 
+        if len(Builds) != 0 and Build == None: 
             
-            print('\n These are the available builds found\n')        
+            print('\n These are the available already analyzed builds \n')        
             for b in range(len(Builds)):
                 print(' %i --> %s' % (b, Builds[b]))
             
-            Build = input(' Select one of the previous builds by number\n Input None if you do not want any of the builds shown ')
+            self.Build = input(' Select one of the previous builds by number\n Input None if you do not want any of the builds shown ')
             
         else:
-            Build = build
+            self.Build = Build
         
         try:
-            with open('./Pickles/svd_datamat_%s.pickle' % Build, 'rb') as f:
+            with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'rb') as f:
                 self.DataMat = pickle.load(f)
             f.close()
-            with open('./Pickles/svd_leftmat_%s.pickle' % Build, 'rb') as f:
+            with open('./Pickles/svd_leftmat_%s.pickle' % self.Build, 'rb') as f:
                 self.LeftMat = pickle.load(f)
             f.close()
-            with open('./Pickles/svd_singval_%s.pickle' % Build, 'rb') as f:
+            with open('./Pickles/svd_singval_%s.pickle' % self.Build, 'rb') as f:
                 self.SingVal = pickle.load(f)
             f.close()
-            with open('./Pickles/svd_rightmat_%s.pickle' % Build, 'rb') as f:
+            with open('./Pickles/svd_rightmat_%s.pickle' % self.Build, 'rb') as f:
                 self.RightMat = pickle.load(f)
             f.close()
-            with open('./Pickles/svd_relmat_%s.pickle' % Build, 'rb') as f:
+            with open('./Pickles/svd_relmat_%s.pickle' % self.Build, 'rb') as f:
                 self.RelMat = pickle.load(f)
             f.close()
-            with open('./Pickles/svd_coupmat_%s.pickle' % Build, 'rb') as f:
+            with open('./Pickles/svd_coupmat_%s.pickle' % self.Build, 'rb') as f:
                 self.CoupMat = pickle.load(f)
             f.close()
-            print('Results for %s SVD analysis already found!\n' % Build)
+            print('Results for %s SVD analysis already found!\n' % self.Build)
             self.found = True
         except:
-            print('Could not open Build %s for SVD analysis...\n' % Build)
+            print('Could not open Build %s for SVD analysis...\n' % self.Build)
             with open('./Pickles/prom_pos.pickle', 'rb') as f:
                 POS = pickle.load(f) #Position
             f.close()
@@ -1113,10 +1130,15 @@ class SVD:
         return Set, Names, int(cont)
         
     def BuildData(self,):
-        sel_pars = input(' Would you like to build your own set or properties or use one of the defaults?\n My own --> 0\n Show defaults --> 1\n')
-        print('\n')
+        if self.build == None:
+            sel_pars = input(' Would you like to build your own set or properties or use one of the defaults?\n My own --> 0\n Show defaults --> 1\n')
+            choose = True
+            print('\n')
+        else:
+            sel_pars = 1
+            choose = False
         if int(sel_pars) == 1:
-            print('Here are the default set of properties, as seen in doi.org/10.21203/rs.3.rs-1287323/v1:')
+            #print('Here are the default set of properties, as seen in doi.org/10.21203/rs.3.rs-1287323/v1:')
             build1 = 'sn1up'
             set1 = ['Upper Leaflet, SN1 Tail (Build = %s)' % build1,
                     [True, False, 
@@ -1230,7 +1252,10 @@ class SVD:
             
             sets = [set1,set2,set3,set4,set5]
             builds = [build1, build2, build3, build4, build5]
-            selection = int(input(' %s --> 0\n %s --> 1\n %s --> 2\n %s --> 3\n %s --> 4\n' % (set1[0], set2[0], set3[0], set4[0], set5[0])))
+            if choose == False:
+                selection = builds.index(self.Build)
+            else:
+                selection = int(input(' %s --> 0\n %s --> 1\n %s --> 2\n %s --> 3\n %s --> 4\n' % (set1[0], set2[0], set3[0], set4[0], set5[0])))
             Set = self.ALLVARS[sets[selection][1]]
             self.Names = self.ALLNAMES[sets[selection][1]]
             self.plotnames = []
