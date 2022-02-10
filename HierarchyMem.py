@@ -63,8 +63,8 @@ class SearchMem:
             print('Initial pickle files not found...\n')
             pdbfile = input('Input pdb or gro file:\n')
             xtcfile = input('Input xtc file:\n')
-            self.nlipids = input('Input desired number of lipids per grid cell:\n')
-            self.b       = input('Input desired extension to grid cells:\n')
+            self.nlipids = input('Input desired number of lipids per grid cell. Default is 10:\n')
+            self.b       = input('Input desired extension to grid cells. Default is 0:\n')
             print('Loading files...\n')
             self.u = mda.Universe(pdbfile,xtcfile,in_memory=True)
             print('Files loaded!')
@@ -683,17 +683,15 @@ class Thickness:
                 self.ANG = pickle.load(f)
             f.close()
             self.found = False
-            
     def getproj(self, pos,angl):
         proj = np.zeros((pos.shape[0],pos.shape[1]))
         for i in range(pos.shape[0]):
             for j in range(pos.shape[1]):        
-                angle = 0.0#angl[i,j]
+                angle = angl[i,j]
                 z = pos[i,j,2]        
                 pr = z/np.cos(angle)        
                 proj[i,j] += pr
         return proj
-    
     def ComputeThickness(self,):
         if self.found == False:
             THICK = []
