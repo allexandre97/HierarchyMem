@@ -1421,3 +1421,4 @@ class SVD:
         cbar.ax.tick_params(labelsize = 13)
         
         plt.tight_layout()
+        plt.show()

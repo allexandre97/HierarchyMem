@@ -64,6 +64,7 @@ def graphTHI(THI):
     a = (binns[-1]-binns[0])/(np.max(N))
     plt.tight_layout()
     ax[1].set_aspect(a)
+    plt.show()
     
 
 #LRS Graphs
@@ -209,6 +210,7 @@ def graphLRS(POS, LRS):
     ax[1,2].tick_params(labelsize=16)
     
     plt.tight_layout()
+    plt.show()
 
 #Tails graphs
 def graphTails(POS, SN1, SN2):
@@ -310,6 +312,7 @@ def graphTails(POS, SN1, SN2):
     ax[1,1].tick_params(labelsize=16)
     
     plt.tight_layout()
+    plt.show()
 
 
 def graphSN(SN1A, SN2A):
@@ -349,6 +352,7 @@ def graphSN(SN1A, SN2A):
     ax[1,1].tick_params(axis='both', labelsize = 18)
     ax[1,1].set_xlim(2.9,np.pi)
     plt.tight_layout()
+    plt.show()
 
 
 #Execute the Search algorithm
