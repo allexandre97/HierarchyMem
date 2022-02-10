@@ -922,34 +922,6 @@ class TailLRS:
 class SVD:
     def __init__(self, Build):
         
-        files = [_ for _ in os.listdir('./Pickles/') if _.startswith('svd')]
-        
-        Builds = []
-        
-        for file in files:
-            
-            l = len(file)
-            s = ''
-            for p in range(l-8,0,-1):
-                if file[p]!='_':
-                    s+=file[p]
-                else:
-                    break
-            s = s[::-1]
-            if not s in Builds:
-                Builds.append(s)
-        
-        if len(Builds) != 0 and Build == None: 
-            
-            print('\n These are the available already analyzed builds \n')        
-            for b in range(len(Builds)):
-                print(' %i --> %s' % (b, Builds[b]))
-            
-            self.Build = input(' Select one of the previous builds by number\n Input None if you do not want any of the builds shown ')
-            
-        else:
-            self.Build = Build
-        
         try:
             with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'rb') as f:
                 self.DataMat = pickle.load(f)
@@ -972,7 +944,37 @@ class SVD:
             print('Results for %s SVD analysis already found!\n' % self.Build)
             self.found = True
         except:
+            
             print('Could not open Build %s for SVD analysis...\n' % self.Build)
+            
+            files = [_ for _ in os.listdir('./Pickles/') if _.startswith('svd')]
+            
+            Builds = []
+            
+            for file in files:
+                
+                l = len(file)
+                s = ''
+                for p in range(l-8,0,-1):
+                    if file[p]!='_':
+                        s+=file[p]
+                    else:
+                        break
+                s = s[::-1]
+                if not s in Builds:
+                    Builds.append(s)
+            
+            if len(Builds) != 0 and Build == None: 
+                
+                print('\n These are the available already analyzed builds \n')        
+                for b in range(len(Builds)):
+                    print(' %i --> %s' % (b, Builds[b]))
+                
+                self.Build = input(' Select one of the previous builds by number\n Input None if you do not want any of the builds shown ')
+                
+            else:
+                self.Build = Build
+            
             with open('./Pickles/prom_pos.pickle', 'rb') as f:
                 POS = pickle.load(f) #Position
             f.close()
@@ -1130,158 +1132,163 @@ class SVD:
         return Set, Names, int(cont)
         
     def BuildData(self,):
-        if self.build == None:
-            sel_pars = input(' Would you like to build your own set or properties or use one of the defaults?\n My own --> 0\n Show defaults --> 1\n')
-            choose = True
-            print('\n')
-        else:
-            sel_pars = 1
-            choose = False
-        if int(sel_pars) == 1:
-            #print('Here are the default set of properties, as seen in doi.org/10.21203/rs.3.rs-1287323/v1:')
-            build1 = 'sn1up'
-            set1 = ['Upper Leaflet, SN1 Tail (Build = %s)' % build1,
-                    [True, False, 
-                    True, False, 
-                    True, False, 
-                    True, False, 
-                    True, False, 
-                    True, False, 
-                    True, False,
-                    True, False,
-                    True, False,
-                    True, False,
-                    True, False,
-                    True, False,
-                    False, False,
-                    True,
-                    True, False,
-                    True, False,
-                    True, False,
-                    False, False,
-                    False, False,
-                    False, False]]
-            build2 = 'sn2up'
-            set2 = ['Upper Leaflet, SN2 Tail (Build = %s)' % build2, 
-                    [True, False, 
-                    True, False, 
-                    True, False, 
-                    True, False, 
-                    True, False, 
-                    True, False, 
-                    True, False,
-                    True, False,
-                    True, False,
-                    True, False,
-                    True, False,
-                    False, False,
-                    True, False,
-                    True,
-                    False, False,
-                    False, False,
-                    False, False,
-                    True, False,
-                    True, False,
-                    True, False]]
-            build3 = 'sn1dn'
-            set3 = ['Lower Leaflet, SN1 Tail (Build = %s)' % build3,
-                    [False, True, 
-                    False, True, 
-                    False, True, 
-                    False, True, 
-                    False, True, 
-                    False, True, 
-                    False, True,
-                    False, True,
-                    False, True,
-                    False, True,
-                    False, True,
-                    False, True,
-                    False, False,
-                    True,
-                    False, True,
-                    False, True,
-                    False, True,
-                    False, False,
-                    False, False,
-                    False, False]]
-            build4 = 'sn2dn'
-            set4 = ['Lower Leaflet, SN2 Tail (Build = %s)' % build4,
-                    [False, True, 
-                    False, True, 
-                    False, True, 
-                    False, True, 
-                    False, True, 
-                    False, True, 
-                    False, True,
-                    False, True,
-                    False, True,
-                    False, True,
-                    False, True,
-                    False, False,
-                    False, True,
-                    True,
-                    False, False,
-                    False, False,
-                    False, False,
-                    False, True,
-                    False, True,
-                    False, True]]
-            build5 = 'redux'
-            set5 = ['Reduced set of variables (Build = %s)' % build5, 
-                    [False, False, 
-                    True, False, 
-                    False, False, 
-                    True, False, 
-                    True, False, 
-                    False, False, 
-                    True, False,
-                    True, False,
-                    False, False,
-                    True, False,
-                    False, False,
-                    True, False,
-                    False, False,
-                    True,
-                    False, False,
-                    False, False,
-                    True, False,
-                    False, False,
-                    False, False,
-                    False, False]]
+        
+        if self.found == False:
             
-            sets = [set1,set2,set3,set4,set5]
-            builds = [build1, build2, build3, build4, build5]
-            if choose == False:
-                selection = builds.index(self.Build)
+            if self.build == None:
+                sel_pars = input(' Would you like to build your own set or properties or use one of the defaults?\n My own --> 0\n Show defaults --> 1\n')
+                choose = True
+                print('\n')
             else:
-                selection = int(input(' %s --> 0\n %s --> 1\n %s --> 2\n %s --> 3\n %s --> 4\n' % (set1[0], set2[0], set3[0], set4[0], set5[0])))
-            Set = self.ALLVARS[sets[selection][1]]
-            self.Names = self.ALLNAMES[sets[selection][1]]
-            self.plotnames = []
-            for n in self.Names:
-                self.plotnames.append(self.NAMESDICT[n])
-            self.names_dict = {}
-            for idx, name in enumerate(self.Names):
-                self.names_dict[name] = idx
-            self.Build = builds[selection]
-            self.DatMat = self.build(Set,self.Names)
-            with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'wb') as f:
-                pickle.dump(self.DatMat,f)
-            f.close()
+                sel_pars = 1
+                choose = False
+            if int(sel_pars) == 1:
+                #print('Here are the default set of properties, as seen in doi.org/10.21203/rs.3.rs-1287323/v1:')
+                build1 = 'sn1up'
+                set1 = ['Upper Leaflet, SN1 Tail (Build = %s)' % build1,
+                        [True, False, 
+                        True, False, 
+                        True, False, 
+                        True, False, 
+                        True, False, 
+                        True, False, 
+                        True, False,
+                        True, False,
+                        True, False,
+                        True, False,
+                        True, False,
+                        True, False,
+                        False, False,
+                        True,
+                        True, False,
+                        True, False,
+                        True, False,
+                        False, False,
+                        False, False,
+                        False, False]]
+                build2 = 'sn2up'
+                set2 = ['Upper Leaflet, SN2 Tail (Build = %s)' % build2, 
+                        [True, False, 
+                        True, False, 
+                        True, False, 
+                        True, False, 
+                        True, False, 
+                        True, False, 
+                        True, False,
+                        True, False,
+                        True, False,
+                        True, False,
+                        True, False,
+                        False, False,
+                        True, False,
+                        True,
+                        False, False,
+                        False, False,
+                        False, False,
+                        True, False,
+                        True, False,
+                        True, False]]
+                build3 = 'sn1dn'
+                set3 = ['Lower Leaflet, SN1 Tail (Build = %s)' % build3,
+                        [False, True, 
+                        False, True, 
+                        False, True, 
+                        False, True, 
+                        False, True, 
+                        False, True, 
+                        False, True,
+                        False, True,
+                        False, True,
+                        False, True,
+                        False, True,
+                        False, True,
+                        False, False,
+                        True,
+                        False, True,
+                        False, True,
+                        False, True,
+                        False, False,
+                        False, False,
+                        False, False]]
+                build4 = 'sn2dn'
+                set4 = ['Lower Leaflet, SN2 Tail (Build = %s)' % build4,
+                        [False, True, 
+                        False, True, 
+                        False, True, 
+                        False, True, 
+                        False, True, 
+                        False, True, 
+                        False, True,
+                        False, True,
+                        False, True,
+                        False, True,
+                        False, True,
+                        False, False,
+                        False, True,
+                        True,
+                        False, False,
+                        False, False,
+                        False, False,
+                        False, True,
+                        False, True,
+                        False, True]]
+                build5 = 'redux'
+                set5 = ['Reduced set of variables (Build = %s)' % build5, 
+                        [False, False, 
+                        True, False, 
+                        False, False, 
+                        True, False, 
+                        True, False, 
+                        False, False, 
+                        True, False,
+                        True, False,
+                        False, False,
+                        True, False,
+                        False, False,
+                        True, False,
+                        False, False,
+                        True,
+                        False, False,
+                        False, False,
+                        True, False,
+                        False, False,
+                        False, False,
+                        False, False]]
+                
+                sets = [set1,set2,set3,set4,set5]
+                builds = [build1, build2, build3, build4, build5]
+                if choose == False:
+                    selection = builds.index(self.Build)
+                else:
+                    selection = int(input(' %s --> 0\n %s --> 1\n %s --> 2\n %s --> 3\n %s --> 4\n' % (set1[0], set2[0], set3[0], set4[0], set5[0])))
+                Set = self.ALLVARS[sets[selection][1]]
+                self.Names = self.ALLNAMES[sets[selection][1]]
+                self.plotnames = []
+                for n in self.Names:
+                    self.plotnames.append(self.NAMESDICT[n])
+                self.names_dict = {}
+                for idx, name in enumerate(self.Names):
+                    self.names_dict[name] = idx
+                self.Build = builds[selection]
+                self.DatMat = self.build(Set,self.Names)
+                with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'wb') as f:
+                    pickle.dump(self.DatMat,f)
+                f.close()
+            else:
+                cont = 0            
+                while cont == 0:
+                    Set, self.Names, cont = self.select()
+                self.names_dict = {}
+                for idx, name in enumerate(self.Names):
+                    self.names_dict[name] = idx
+                self.Build = input(' Enter a Build name for your chosen selection (Ex: user, myset...)\n Please do not enter any underscore (_) in the build name.')
+                self.DatMat = self.build(Set,self.Names)
+                
+                with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'wb') as f:
+                    pickle.dump(self.DatMat, f)
+                f.close()
         else:
-            cont = 0            
-            while cont == 0:
-                Set, self.Names, cont = self.select()
-            self.names_dict = {}
-            for idx, name in enumerate(self.Names):
-                self.names_dict[name] = idx
-            self.Build = input(' Enter a Build name for your chosen selection (Ex: user, myset...)\n Please do not enter any underscore (_) in the build name.')
-            self.DatMat = self.build(Set,self.Names)
-            
-            with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'wb') as f:
-                pickle.dump(self.DatMat, f)
-            f.close()
+            pass
             
     def Eigvals(self,SingVal):
         
