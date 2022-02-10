@@ -80,7 +80,7 @@ class SearchMem:
                 print('Initial pickle files not found...\n')
                 pdbfile = input('Input pdb or gro file:\n')
                 xtcfile = input('Input xtc file:\n')
-                self.nlipids = 11
+                self.nlipids = 8
                 self.b       = 0
                 print('Loading files...\n')
                 self.u = mda.Universe(pdbfile,xtcfile,in_memory=True)
@@ -922,6 +922,47 @@ class TailLRS:
 class SVD:
     def __init__(self, Build):
         
+        self.ALLNAMES = np.array(['Topograhy Upper Leaflet', 'Topography Lower Leaflet',
+                   'Isocurvature X Upper Leaflet', 'Isocurvature X Lower Leaflet', 
+                   'Isocurvature Y Upper Leaflet', 'Isocurvature Y Lower Leaflet', 
+                   'Isocurvature Z Upper Leaflet', 'Isocurvature Z Lower Leaflet', 
+                   'Anisocurvature X Upper Leaflet', 'Anisocurvature X Lower Leaflet', 
+                   'Anisocurvature Y Upper Leaflet', 'Anisocurvature Y Lower Leaflet', 
+                   'Anisocurvature Z Upper Leaflet', 'Anisocurvature Z Lower Leaflet',
+                   'Normals X Upper Leaflet', 'Normals X Lower Leaflet', 
+                   'Normals Y Upper Leaflet', 'Normals Y Lower Leaflet', 
+                   'Normals Z Upper Leaflet', 'Normals Z Lower Leaflet',
+                   'Normal Angles Upper Leaflet', 'Normal Angles Lower Leaflet',
+                   'SN1 Angles Upper Leaflet', 'SN1 Angles Lower Leaflet',
+                   'SN2 Angles Upper Leaflet', 'SN2 Angles Lower Leaflet',
+                   'Thickness',
+                   "SN1 X' Upper Leaflet", "SN1 X' Lower Leaflet",
+                   "SN1 Y' Upper Leaflet", "SN1 Y' Lower Leaflet",
+                   "SN1 Z' Upper Leaflet", "SN1 Z' Lower Leaflet",
+                   "SN2 X' Upper Leaflet", "SN2 X' Lower Leaflet",
+                   "SN2 Y' Upper Leaflet", "SN2 Y' Lower Leaflet",
+                   "SN2 Z' Upper Leaflet", "SN2 Z' Lower Leaflet"])
+        self.NAMESDICT = {'Topograhy Upper Leaflet':r'$\mathbf{\Delta Z}$', 'Topography Lower Leaflet':r'$\mathbf{\Delta Z}$',
+                   'Isocurvature X Upper Leaflet':r'$\mathbf{X^{\prime}_{X}}$', 'Isocurvature X Lower Leaflet':r'$\mathbf{X^{\prime}_{X}}$', 
+                   'Isocurvature Y Upper Leaflet':r'$\mathbf{X^{\prime}_{Y}}$', 'Isocurvature Y Lower Leaflet':r'$\mathbf{X^{\prime}_{Y}}$', 
+                   'Isocurvature Z Upper Leaflet':r'$\mathbf{X^{\prime}_{Z}}$', 'Isocurvature Z Lower Leaflet':r'$\mathbf{X^{\prime}_{Z}}$', 
+                   'Anisocurvature X Upper Leaflet':r'$\mathbf{Y^{\prime}_{X}}$', 'Anisocurvature X Lower Leaflet':r'$\mathbf{Y^{\prime}_{X}}$', 
+                   'Anisocurvature Y Upper Leaflet':r'$\mathbf{Y^{\prime}_{Y}}$', 'Anisocurvature Y Lower Leaflet':r'$\mathbf{Y^{\prime}_{Y}}$', 
+                   'Anisocurvature Z Upper Leaflet':r'$\mathbf{Y^{\prime}_{Z}}$', 'Anisocurvature Z Lower Leaflet':r'$\mathbf{Y^{\prime}_{Z}}$',
+                   'Normals X Upper Leaflet':r'$\mathbf{Z^{\prime}_{X}}$', 'Normals X Lower Leaflet':r'$\mathbf{Z^{\prime}_{X}}$', 
+                   'Normals Y Upper Leaflet':r'$\mathbf{Z^{\prime}_{Y}}$', 'Normals Y Lower Leaflet':r'$\mathbf{Z^{\prime}_{Y}}$', 
+                   'Normals Z Upper Leaflet':r'$\mathbf{Z^{\prime}_{Z}}$', 'Normals Z Lower Leaflet':r'$\mathbf{Z^{\prime}_{Z}}$',
+                   'Normal Angles Upper Leaflet':r'$\mathbf{\angle Z^{\prime}}$', 'Normal Angles Lower Leaflet':r'$\mathbf{\angle Z^{\prime}}$',
+                   'SN1 Angles Upper Leaflet':r'$\mathbf{\angle SN1}$', 'SN1 Angles Lower Leaflet':r'$\mathbf{\angle SN1}$',
+                   'SN2 Angles Upper Leaflet':r'$\mathbf{\angle SN2}$', 'SN2 Angles Lower Leaflet':r'$\mathbf{\angle SN2}$',
+                   'Thickness':r'$\mathbf{THI}$',
+                   "SN1 X' Upper Leaflet":r'$\mathbf{SN1_{X^{\prime}}}$', "SN1 X' Lower Leaflet":r'$\mathbf{SN1_{X^{\prime}}}$',
+                   "SN1 Y' Upper Leaflet":r'$\mathbf{SN1_{Y^{\prime}}}$', "SN1 Y' Lower Leaflet":r'$\mathbf{SN1_{Y^{\prime}}}$',
+                   "SN1 Z' Upper Leaflet":r'$\mathbf{SN1_{Z^{\prime}}}$', "SN1 Z' Lower Leaflet":r'$\mathbf{SN1_{Z^{\prime}}}$',
+                   "SN2 X' Upper Leaflet":r'$\mathbf{SN2_{X^{\prime}}}$', "SN2 X' Lower Leaflet":r'$\mathbf{SN2_{X^{\prime}}}$',
+                   "SN2 Y' Upper Leaflet":r'$\mathbf{SN2_{Y^{\prime}}}$', "SN2 Y' Lower Leaflet":r'$\mathbf{SN2_{Y^{\prime}}}$',
+                   "SN2 Z' Upper Leaflet":r'$\mathbf{SN2_{Z^{\prime}}}$', "SN2 Z' Lower Leaflet":r'$\mathbf{SN2_{Z^{\prime}}}$'}
+        
         self.Build = Build
         
         files = [_ for _ in os.listdir('./Pickles/') if _.startswith('svd')]
@@ -1059,46 +1100,6 @@ class SVD:
                        SN2x_up, SN2x_dn,
                        SN2y_up, SN2y_dn,
                        SN2z_up, SN2z_dn])
-            self.ALLNAMES = np.array(['Topograhy Upper Leaflet', 'Topography Lower Leaflet',
-                       'Isocurvature X Upper Leaflet', 'Isocurvature X Lower Leaflet', 
-                       'Isocurvature Y Upper Leaflet', 'Isocurvature Y Lower Leaflet', 
-                       'Isocurvature Z Upper Leaflet', 'Isocurvature Z Lower Leaflet', 
-                       'Anisocurvature X Upper Leaflet', 'Anisocurvature X Lower Leaflet', 
-                       'Anisocurvature Y Upper Leaflet', 'Anisocurvature Y Lower Leaflet', 
-                       'Anisocurvature Z Upper Leaflet', 'Anisocurvature Z Lower Leaflet',
-                       'Normals X Upper Leaflet', 'Normals X Lower Leaflet', 
-                       'Normals Y Upper Leaflet', 'Normals Y Lower Leaflet', 
-                       'Normals Z Upper Leaflet', 'Normals Z Lower Leaflet',
-                       'Normal Angles Upper Leaflet', 'Normal Angles Lower Leaflet',
-                       'SN1 Angles Upper Leaflet', 'SN1 Angles Lower Leaflet',
-                       'SN2 Angles Upper Leaflet', 'SN2 Angles Lower Leaflet',
-                       'Thickness',
-                       "SN1 X' Upper Leaflet", "SN1 X' Lower Leaflet",
-                       "SN1 Y' Upper Leaflet", "SN1 Y' Lower Leaflet",
-                       "SN1 Z' Upper Leaflet", "SN1 Z' Lower Leaflet",
-                       "SN2 X' Upper Leaflet", "SN2 X' Lower Leaflet",
-                       "SN2 Y' Upper Leaflet", "SN2 Y' Lower Leaflet",
-                       "SN2 Z' Upper Leaflet", "SN2 Z' Lower Leaflet"])
-            self.NAMESDICT = {'Topograhy Upper Leaflet':r'$\mathbf{\Delta Z}$', 'Topography Lower Leaflet':r'$\mathbf{\Delta Z}$',
-                       'Isocurvature X Upper Leaflet':r'$\mathbf{X^{\prime}_{X}}$', 'Isocurvature X Lower Leaflet':r'$\mathbf{X^{\prime}_{X}}$', 
-                       'Isocurvature Y Upper Leaflet':r'$\mathbf{X^{\prime}_{Y}}$', 'Isocurvature Y Lower Leaflet':r'$\mathbf{X^{\prime}_{Y}}$', 
-                       'Isocurvature Z Upper Leaflet':r'$\mathbf{X^{\prime}_{Z}}$', 'Isocurvature Z Lower Leaflet':r'$\mathbf{X^{\prime}_{Z}}$', 
-                       'Anisocurvature X Upper Leaflet':r'$\mathbf{Y^{\prime}_{X}}$', 'Anisocurvature X Lower Leaflet':r'$\mathbf{Y^{\prime}_{X}}$', 
-                       'Anisocurvature Y Upper Leaflet':r'$\mathbf{Y^{\prime}_{Y}}$', 'Anisocurvature Y Lower Leaflet':r'$\mathbf{Y^{\prime}_{Y}}$', 
-                       'Anisocurvature Z Upper Leaflet':r'$\mathbf{Y^{\prime}_{Z}}$', 'Anisocurvature Z Lower Leaflet':r'$\mathbf{Y^{\prime}_{Z}}$',
-                       'Normals X Upper Leaflet':r'$\mathbf{Z^{\prime}_{X}}$', 'Normals X Lower Leaflet':r'$\mathbf{Z^{\prime}_{X}}$', 
-                       'Normals Y Upper Leaflet':r'$\mathbf{Z^{\prime}_{Y}}$', 'Normals Y Lower Leaflet':r'$\mathbf{Z^{\prime}_{Y}}$', 
-                       'Normals Z Upper Leaflet':r'$\mathbf{Z^{\prime}_{Z}}$', 'Normals Z Lower Leaflet':r'$\mathbf{Z^{\prime}_{Z}}$',
-                       'Normal Angles Upper Leaflet':r'$\mathbf{\angle Z^{\prime}}$', 'Normal Angles Lower Leaflet':r'$\mathbf{\angle Z^{\prime}}$',
-                       'SN1 Angles Upper Leaflet':r'$\mathbf{\angle SN1}$', 'SN1 Angles Lower Leaflet':r'$\mathbf{\angle SN1}$',
-                       'SN2 Angles Upper Leaflet':r'$\mathbf{\angle SN2}$', 'SN2 Angles Lower Leaflet':r'$\mathbf{\angle SN2}$',
-                       'Thickness':r'$\mathbf{THI}$',
-                       "SN1 X' Upper Leaflet":r'$\mathbf{SN1_{X^{\prime}}}$', "SN1 X' Lower Leaflet":r'$\mathbf{SN1_{X^{\prime}}}$',
-                       "SN1 Y' Upper Leaflet":r'$\mathbf{SN1_{Y^{\prime}}}$', "SN1 Y' Lower Leaflet":r'$\mathbf{SN1_{Y^{\prime}}}$',
-                       "SN1 Z' Upper Leaflet":r'$\mathbf{SN1_{Z^{\prime}}}$', "SN1 Z' Lower Leaflet":r'$\mathbf{SN1_{Z^{\prime}}}$',
-                       "SN2 X' Upper Leaflet":r'$\mathbf{SN2_{X^{\prime}}}$', "SN2 X' Lower Leaflet":r'$\mathbf{SN2_{X^{\prime}}}$',
-                       "SN2 Y' Upper Leaflet":r'$\mathbf{SN2_{Y^{\prime}}}$', "SN2 Y' Lower Leaflet":r'$\mathbf{SN2_{Y^{\prime}}}$',
-                       "SN2 Z' Upper Leaflet":r'$\mathbf{SN2_{Z^{\prime}}}$', "SN2 Z' Lower Leaflet":r'$\mathbf{SN2_{Z^{\prime}}}$'}
             self.found = False
 
     def build(self,Set,Names):
@@ -1135,8 +1136,121 @@ class SVD:
         
     def BuildData(self,):
         
+        build1 = 'sn1up'
+        set1 = ['Upper Leaflet, SN1 Tail (Build = %s)' % build1,
+                [True, False, 
+                True, False, 
+                True, False, 
+                True, False, 
+                True, False, 
+                True, False, 
+                True, False,
+                True, False,
+                True, False,
+                True, False,
+                True, False,
+                True, False,
+                False, False,
+                True,
+                True, False,
+                True, False,
+                True, False,
+                False, False,
+                False, False,
+                False, False]]
+        build2 = 'sn2up'
+        set2 = ['Upper Leaflet, SN2 Tail (Build = %s)' % build2, 
+                [True, False, 
+                True, False, 
+                True, False, 
+                True, False, 
+                True, False, 
+                True, False, 
+                True, False,
+                True, False,
+                True, False,
+                True, False,
+                True, False,
+                False, False,
+                True, False,
+                True,
+                False, False,
+                False, False,
+                False, False,
+                True, False,
+                True, False,
+                True, False]]
+        build3 = 'sn1dn'
+        set3 = ['Lower Leaflet, SN1 Tail (Build = %s)' % build3,
+                [False, True, 
+                False, True, 
+                False, True, 
+                False, True, 
+                False, True, 
+                False, True, 
+                False, True,
+                False, True,
+                False, True,
+                False, True,
+                False, True,
+                False, True,
+                False, False,
+                True,
+                False, True,
+                False, True,
+                False, True,
+                False, False,
+                False, False,
+                False, False]]
+        build4 = 'sn2dn'
+        set4 = ['Lower Leaflet, SN2 Tail (Build = %s)' % build4,
+                [False, True, 
+                False, True, 
+                False, True, 
+                False, True, 
+                False, True, 
+                False, True, 
+                False, True,
+                False, True,
+                False, True,
+                False, True,
+                False, True,
+                False, False,
+                False, True,
+                True,
+                False, False,
+                False, False,
+                False, False,
+                False, True,
+                False, True,
+                False, True]]
+        build5 = 'redux'
+        set5 = ['Reduced set of variables (Build = %s)' % build5, 
+                [False, False, 
+                True, False, 
+                False, False, 
+                True, False, 
+                True, False, 
+                False, False, 
+                True, False,
+                True, False,
+                False, False,
+                True, False,
+                False, False,
+                True, False,
+                False, False,
+                True,
+                False, False,
+                False, False,
+                True, False,
+                False, False,
+                False, False,
+                False, False]]
+        
+        sets = [set1,set2,set3,set4,set5]
+        builds = [build1, build2, build3, build4, build5]
+        
         if self.found == False:
-            
             if self.build == None:
                 sel_pars = input(' Would you like to build your own set or properties or use one of the defaults?\n My own --> 0\n Show defaults --> 1\n')
                 choose = True
@@ -1146,119 +1260,6 @@ class SVD:
                 choose = False
             if int(sel_pars) == 1:
                 #print('Here are the default set of properties, as seen in doi.org/10.21203/rs.3.rs-1287323/v1:')
-                build1 = 'sn1up'
-                set1 = ['Upper Leaflet, SN1 Tail (Build = %s)' % build1,
-                        [True, False, 
-                        True, False, 
-                        True, False, 
-                        True, False, 
-                        True, False, 
-                        True, False, 
-                        True, False,
-                        True, False,
-                        True, False,
-                        True, False,
-                        True, False,
-                        True, False,
-                        False, False,
-                        True,
-                        True, False,
-                        True, False,
-                        True, False,
-                        False, False,
-                        False, False,
-                        False, False]]
-                build2 = 'sn2up'
-                set2 = ['Upper Leaflet, SN2 Tail (Build = %s)' % build2, 
-                        [True, False, 
-                        True, False, 
-                        True, False, 
-                        True, False, 
-                        True, False, 
-                        True, False, 
-                        True, False,
-                        True, False,
-                        True, False,
-                        True, False,
-                        True, False,
-                        False, False,
-                        True, False,
-                        True,
-                        False, False,
-                        False, False,
-                        False, False,
-                        True, False,
-                        True, False,
-                        True, False]]
-                build3 = 'sn1dn'
-                set3 = ['Lower Leaflet, SN1 Tail (Build = %s)' % build3,
-                        [False, True, 
-                        False, True, 
-                        False, True, 
-                        False, True, 
-                        False, True, 
-                        False, True, 
-                        False, True,
-                        False, True,
-                        False, True,
-                        False, True,
-                        False, True,
-                        False, True,
-                        False, False,
-                        True,
-                        False, True,
-                        False, True,
-                        False, True,
-                        False, False,
-                        False, False,
-                        False, False]]
-                build4 = 'sn2dn'
-                set4 = ['Lower Leaflet, SN2 Tail (Build = %s)' % build4,
-                        [False, True, 
-                        False, True, 
-                        False, True, 
-                        False, True, 
-                        False, True, 
-                        False, True, 
-                        False, True,
-                        False, True,
-                        False, True,
-                        False, True,
-                        False, True,
-                        False, False,
-                        False, True,
-                        True,
-                        False, False,
-                        False, False,
-                        False, False,
-                        False, True,
-                        False, True,
-                        False, True]]
-                build5 = 'redux'
-                set5 = ['Reduced set of variables (Build = %s)' % build5, 
-                        [False, False, 
-                        True, False, 
-                        False, False, 
-                        True, False, 
-                        True, False, 
-                        False, False, 
-                        True, False,
-                        True, False,
-                        False, False,
-                        True, False,
-                        False, False,
-                        True, False,
-                        False, False,
-                        True,
-                        False, False,
-                        False, False,
-                        True, False,
-                        False, False,
-                        False, False,
-                        False, False]]
-                
-                sets = [set1,set2,set3,set4,set5]
-                builds = [build1, build2, build3, build4, build5]
                 if choose == False:
                     selection = builds.index(self.Build)
                 else:
@@ -1272,9 +1273,9 @@ class SVD:
                 for idx, name in enumerate(self.Names):
                     self.names_dict[name] = idx
                 self.Build = builds[selection]
-                self.DatMat = self.build(Set,self.Names)
+                self.DataMat = self.build(Set,self.Names)
                 with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'wb') as f:
-                    pickle.dump(self.DatMat,f)
+                    pickle.dump(self.DataMat,f)
                 f.close()
             else:
                 cont = 0            
@@ -1284,13 +1285,21 @@ class SVD:
                 for idx, name in enumerate(self.Names):
                     self.names_dict[name] = idx
                 self.Build = input(' Enter a Build name for your chosen selection (Ex: user, myset...)\n Please do not enter any underscore (_) in the build name.')
-                self.DatMat = self.build(Set,self.Names)
+                self.DataMat = self.build(Set,self.Names)
                 
                 with open('./Pickles/svd_datamat_%s.pickle' % self.Build, 'wb') as f:
-                    pickle.dump(self.DatMat, f)
+                    pickle.dump(self.DataMat, f)
                 f.close()
         else:
-            pass
+            
+            selection = builds.index(self.Build)
+            self.Names = self.ALLNAMES[sets[selection][1]]
+            self.plotnames = []
+            for n in self.Names:
+                self.plotnames.append(self.NAMESDICT[n])
+            self.names_dict = {}
+            for idx, name in enumerate(self.Names):
+                self.names_dict[name] = idx
             
     def Eigvals(self,SingVal):
         
@@ -1345,7 +1354,7 @@ class SVD:
     
     def ComputeSVD(self,):
     
-        self.LeftMat, self.SingVal, self.RightMat = np.linalg.svd(self.DatMat, full_matrices = False)
+        self.LeftMat, self.SingVal, self.RightMat = np.linalg.svd(self.DataMat, full_matrices = False)
         
         with open('./Pickles/svd_leftmat_%s.pickle' % self.Build, 'wb') as f:
             pickle.dump(self.LeftMat, f)
