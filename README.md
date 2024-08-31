@@ -15,11 +15,11 @@ It is strongly recommended to build a virtual Python 3 environment (see [pip](ht
 
 ## How to rapidly execute HierarchyMem.
 
-Two .py files are provided in this repository. **HierarchyMem.py** is the library that executes the analyses (described in [here](https://www.researchsquare.com/article/rs-1287323/v1)) on the lipid membrane, and builds the [.pickle files](https://docs.python.org/3/library/pickle.html) used to store the results. **Execute.py** is an example wrapper script that calls for the functions of HierarchyMem to carry out the analyses.
+Two .py files are provided in this repository. **HierarchyMem.py** is the library that executes the analyses (described in [here](https://www.sciencedirect.com/science/article/pii/S2001037022001970)) on the lipid membrane, and builds the [.pickle files](https://docs.python.org/3/library/pickle.html) used to store the results. **Execute.py** is an example wrapper script that calls for the functions of HierarchyMem to carry out the analyses.
 
 These two files should be put in the same folder. By running ```python3 Execute.py``` the program will be executed with its default values. The module will ask for a route to a structure (.gro, .pdb, ...) and to a trajectory (.trr, .xtc, ...) file and then perform the analyses automatically. A minimal example .pdb and .xtc files can be found [here](https://www.dropbox.com/sh/69piqqumkbvmdvo/AACrYtswccGZYITTPBWrYLdwa?dl=0). 
 
-The script will create a Pickles folder in the directory it is being executed. All the pickle files created will be stored there, which allows for faster re-execution and further manual post-processing if desired. Once the analyses are finished, several figures will be created and shown interactively with equivalent data as the one seen [here](https://www.researchsquare.com/article/rs-1287323/v1).
+The script will create a Pickles folder in the directory it is being executed. All the pickle files created will be stored there, which allows for faster re-execution and further manual post-processing if desired. Once the analyses are finished, several figures will be created and shown interactively with equivalent data as the one seen [here](https://www.sciencedirect.com/science/article/pii/S2001037022001970).
 
 ## A bit more of control on HierarchyMem.
 
